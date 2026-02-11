@@ -236,21 +236,33 @@ const DemoPollCard = ({ id, title, options, votedIndex }) => {
 const LiveDemoModal = ({ onClose }) => {
     const [cursor, setCursor] = useState({ x: -100, y: -100 });
     const [isClicking, setIsClicking] = useState(false);
+    const [isHoveringClose, setIsHoveringClose] = useState(false); 
     const [movieState, setMovieState] = useState({ poll1: -1, poll2: -1 });
+
+    // --- NEW: Toggle system cursor visibility ---
+    useEffect(() => {
+        document.body.classList.add('demo-active');
+        return () => {
+            document.body.classList.remove('demo-active');
+        };
+    }, []);
 
     useEffect(() => {
         let isMounted = true;
         const runScript = async () => {
             const wait = (ms) => new Promise(res => setTimeout(res, ms));
-            const moveTo = (elementId) => {
+            
+            const moveTo = (elementId, isCloseBtn = false) => {
                 const el = document.getElementById(elementId);
                 if (el && isMounted) {
                     const rect = el.getBoundingClientRect();
                     setCursor({ x: rect.left + rect.width * 0.5, y: rect.top + rect.height * 0.5 });
+                    if (isCloseBtn) setIsHoveringClose(true);
                 }
             };
 
             await wait(1000);
+
             moveTo("demo-p1-opt-0");
             await wait(800);
             setIsClicking(true);
@@ -266,7 +278,12 @@ const LiveDemoModal = ({ onClose }) => {
             await wait(200);
             setIsClicking(false);
             
-            await wait(1500);
+            await wait(1000);
+            moveTo("demo-close-btn", true);
+            await wait(800);
+            setIsClicking(true);
+            await wait(200);
+            
             if(isMounted) onClose();
         };
         runScript();
@@ -282,6 +299,7 @@ const LiveDemoModal = ({ onClose }) => {
             onClick={onClose}
         >
             <Cursor x={cursor.x} y={cursor.y} isClicking={isClicking} />
+            
             <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -294,10 +312,19 @@ const LiveDemoModal = ({ onClose }) => {
                         <h2 className="text-2xl font-bold text-white tracking-tight">Interactive Preview</h2>
                         <p className="text-zinc-500 text-sm mt-1">Simulating crowd participation</p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
-                        <X className="w-5 h-5 text-zinc-400" />
+                    
+                    <button 
+                        id="demo-close-btn"
+                        onClick={onClose} 
+                        className={cn(
+                            "p-2 rounded-full transition-colors",
+                            isHoveringClose ? "bg-white/10 text-white" : "text-zinc-400"
+                        )}
+                    >
+                        <X className="w-5 h-5" />
                     </button>
                 </div>
+
                 <div className="space-y-6">
                     <DemoPollCard id="demo-p1" title="Select Next Track" votedIndex={movieState.poll1} options={[{ name: "Unreleased Single", percent: 45 }, { name: "Acoustic Solo", percent: 35 }]} />
                     <DemoPollCard id="demo-p2" title="Light Show Color" votedIndex={movieState.poll2} options={[{ name: "Neon Blue", percent: 60 }, { name: "Laser Crimson", percent: 40 }]} />
@@ -307,17 +334,12 @@ const LiveDemoModal = ({ onClose }) => {
     );
 };
 
-// --- Main Landing Component ---
-
 const Landing = () => {
     const navigate = useNavigate();
     const [showDemo, setShowDemo] = useState(false);
-    
-    // UPDATED: Now managing user state via Firebase
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        // UPDATED: Firebase Auth listener replaces localStorage check
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setIsLoggedIn(true);
@@ -325,8 +347,6 @@ const Landing = () => {
                 setIsLoggedIn(false);
             }
         });
-
-        // Cleanup subscription on unmount
         return () => unsubscribe();
     }, []);
 
@@ -335,7 +355,6 @@ const Landing = () => {
             <MouseGradient />
             <GridPattern />
 
-            {/* Navigation */}
             <nav className="fixed top-0 w-full p-6 flex justify-between items-center z-50 backdrop-blur-md bg-black/10">
                 <motion.div 
                     initial={{ opacity: 0, x: -20 }} 
@@ -368,7 +387,6 @@ const Landing = () => {
 
             <main className="container mx-auto px-6 relative z-10 pt-32 pb-20">
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
-                    {/* Hero Text */}
                     <div className="text-center lg:text-left">
                         <motion.div 
                             initial={{ opacity: 0, y: 10 }} 
@@ -416,7 +434,6 @@ const Landing = () => {
                         </div>
                     </div>
 
-                    {/* Visual Section */}
                     <div className="relative h-[500px] lg:h-[600px] flex items-center justify-center">
                         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                             <motion.img

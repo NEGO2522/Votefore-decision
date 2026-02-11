@@ -35,3 +35,16 @@
 .perspective-1000 {
   perspective: 1000px;
 }
+
+/* This hides the real system cursor */
+.demo-active, .demo-active * {
+  cursor: none !important;
+}
+
+/* Your custom cursor needs pointer-events none so it doesn't block clicks */
+.custom-cursor {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  /* Add your custom styles (width, height, background-image, etc.) */
+}
