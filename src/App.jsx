@@ -4,6 +4,7 @@ import Sign from './components/Sign';
 import Profile from './pages/Profile'; // Import the new Profile component
 import PrivacyPolicy from './components/Privacy_Policy';
 import ContactUs from './components/ContactUs';
+import Generate from './pages/Generate';
 
 // Optional: A small component or page to handle the redirection after the email link is clicked
 const FinishSignIn = () => (
@@ -22,6 +23,7 @@ function App() {
         
         {/* New Profile Route */}
         <Route path="/profile" element={<Profile />} />
+        <Route path="/generate" element={<Generate />} />
         
         {/* Support & Legal */}
         <Route path="/contact" element={<ContactUs />} />
@@ -29,6 +31,7 @@ function App() {
 
         {/* Auth Callback */}
         <Route path="/finish-sign-in" element={<FinishSignIn />} />
+
 
         {/* 404 Catch-all (Optional) */}
         <Route path="*" element={

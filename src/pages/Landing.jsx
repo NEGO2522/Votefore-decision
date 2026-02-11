@@ -239,7 +239,6 @@ const LiveDemoModal = ({ onClose }) => {
     const [isHoveringClose, setIsHoveringClose] = useState(false); 
     const [movieState, setMovieState] = useState({ poll1: -1, poll2: -1 });
 
-    // --- NEW: Toggle system cursor visibility ---
     useEffect(() => {
         document.body.classList.add('demo-active');
         return () => {
@@ -416,7 +415,7 @@ const Landing = () => {
                                 onClick={() => navigate(isLoggedIn ? '/generate' : '/sign-in')} 
                                 className="group px-8 py-4 bg-white text-black rounded-full font-bold hover:scale-105 transition-all flex items-center justify-center gap-2 shadow-xl shadow-white/5"
                             >
-                                {isLoggedIn ? 'Start Live Poll' : 'Start Live Poll'}
+                                Start Live Poll
                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </button>
                             <button 
