@@ -1,7 +1,6 @@
 # VoteFor
 ### Real-Time Live Event Interaction Platform
 
-![Live Concert Interaction](https://images.unsplash.com/photo-1493225255756-d9584f8606e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80)
 
 VoteFor is a real-time web application designed to enhance interaction between performers and their audience during live events. It facilitates instant decision-making by allowing crowds to vote on options presented by speakers or performers, creating a dynamic and engaging experience.
 
