@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Sign from './components/Sign';
 
 function App() {
-  const [page, setPage] = useState('landing');
-
   return (
-    <>
-      {page === 'landing' && <Landing onSignIn={() => setPage('sign')} />}
-      {page === 'sign' && <Sign onBack={() => setPage('landing')} />}
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/sign-in" element={<Sign />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, Chrome } from 'lucide-react';
+import { Mail, Chrome } from 'lucide-react';
 
-const Sign = ({ onBack }) => {
+const Sign = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = (e) => {
@@ -35,7 +35,7 @@ const Sign = ({ onBack }) => {
 
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold mb-2 tracking-tight">Welcome back</h1>
-                        <p className="text-zinc-500">Enter your credentials to access your dashboard.</p>
+                        <p className="text-zinc-500">Enter your email to receive a login link.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -51,17 +51,7 @@ const Sign = ({ onBack }) => {
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-zinc-300">Password</label>
-                            <div className="relative group">
-                                <input
-                                    type="password"
-                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 pl-10 focus:outline-none focus:border-white/30 transition-colors text-white placeholder:text-zinc-600"
-                                    placeholder="••••••••"
-                                />
-                                <Lock className="w-4 h-4 text-zinc-500 absolute left-3 top-3.5 group-focus-within:text-white transition-colors" />
-                            </div>
-                        </div>
+
 
                         <button
                             type="submit"
@@ -71,7 +61,7 @@ const Sign = ({ onBack }) => {
                             {isLoading ? (
                                 <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
                             ) : (
-                                "Sign In"
+                                "Send Login Link"
                             )}
                         </button>
                     </form>

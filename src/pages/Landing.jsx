@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useSpring, useMotionValue } from 'framer-motion';
-import { ArrowRight, BarChart2, ShieldCheck, Zap, Globe } from 'lucide-react';
+import { ArrowRight, BarChart2, ShieldCheck, Zap, Globe, QrCode } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -8,6 +9,13 @@ import { twMerge } from 'tailwind-merge';
 function cn(...inputs) {
     return twMerge(clsx(inputs));
 }
+
+// Verified high-quality Unsplash URLs
+const CONCERT_IMAGES = [
+    "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80", 
+    "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80", 
+    "https://images.unsplash.com/photo-1514525253344-99a42d74021c?auto=format&fit=crop&w=800&q=80"  
+];
 
 // --- Components ---
 
@@ -27,7 +35,7 @@ const Cursor = ({ x, y, isClicking }) => (
             opacity: { duration: 0.5 }
         }}
         className="fixed top-0 left-0 w-6 h-6 z-[60] pointer-events-none"
-        style={{ marginTop: -5, marginLeft: -5 }} // Offset to align tip
+        style={{ marginTop: -5, marginLeft: -5 }} 
     >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 3L10.07 19.97L12.58 12.58L19.97 10.07L3 3Z" fill="white" stroke="black" strokeWidth="1.5" strokeLinejoin="round" />
@@ -69,7 +77,6 @@ const GridPattern = () => (
 
 const AnimatedText = ({ text, className, delay = 0 }) => {
     const words = text.split(" ");
-
     const container = {
         hidden: { opacity: 0 },
         visible: (i = 1) => ({
@@ -77,27 +84,18 @@ const AnimatedText = ({ text, className, delay = 0 }) => {
             transition: { staggerChildren: 0.1, delayChildren: delay * i },
         }),
     };
-
     const child = {
         visible: {
             opacity: 1,
             y: 0,
             filter: "blur(0px)",
-            transition: {
-                type: "spring",
-                damping: 12,
-                stiffness: 100,
-            },
+            transition: { type: "spring", damping: 12, stiffness: 100 },
         },
         hidden: {
             opacity: 0,
             y: 20,
             filter: "blur(10px)",
-            transition: {
-                type: "spring",
-                damping: 12,
-                stiffness: 100,
-            },
+            transition: { type: "spring", damping: 12, stiffness: 100 },
         },
     };
 
@@ -120,13 +118,12 @@ const AnimatedText = ({ text, className, delay = 0 }) => {
 
 const VotingCard = () => {
     const [voted, setVoted] = useState(false);
-
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.9, rotateX: 20 }}
             animate={{ opacity: 1, scale: 1, rotateX: 0 }}
             transition={{ delay: 0.8, duration: 1, type: "spring" }}
-            className="relative z-20 w-full max-w-md bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl shadow-white/5 mx-auto"
+            className="relative z-20 w-full max-w-md bg-black/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl shadow-white/5 mx-auto"
         >
             <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
             <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -159,14 +156,12 @@ const VotingCard = () => {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                     >
-                        {/* Progress Bar Background */}
                         <motion.div
                             initial={{ width: 0 }}
                             animate={voted ? { width: `${option.percent}%` } : { width: "0%" }}
                             transition={{ duration: 1.5, delay: 0.1, ease: "circOut" }}
                             className="absolute top-0 left-0 h-full bg-white/10"
                         />
-
                         <div className="relative p-4 flex justify-between items-center z-10 border border-white/5 rounded-xl group-hover:border-white/20 transition-all bg-black/20">
                             <span className="font-light text-zinc-300 group-hover:text-white transition-colors">{option.name}</span>
                             {voted ? (
@@ -208,9 +203,7 @@ const MinimalFeature = ({ icon: Icon, title, delay }) => (
 );
 
 const DemoPollCard = ({ id, title, options, votedIndex }) => {
-    // Internal separate jitter state for liveliness
     const [jitter, setJitter] = useState(options.map(() => 0));
-
     useEffect(() => {
         const interval = setInterval(() => {
             setJitter(prev => prev.map(() => Math.random() * 2 - 1));
@@ -230,35 +223,29 @@ const DemoPollCard = ({ id, title, options, votedIndex }) => {
             <div className="space-y-3">
                 {options.map((opt, i) => {
                     const isVoted = votedIndex === i;
-                    // Calculate display percent (base + jitter, boosted if voted)
                     let percent = opt.percent + jitter[i];
-                    if (isVoted) percent += 15; // Simulate vote bump
+                    if (isVoted) percent += 15;
                     percent = Math.min(100, Math.max(0, percent));
-
                     return (
                         <div
-                            id={`${id}-opt-${i}`} // ID for cursor targeting
+                            id={`${id}-opt-${i}`}
                             key={i}
                             className={cn(
                                 "relative h-10 rounded-lg overflow-hidden transition-all duration-300 border",
                                 isVoted ? "border-white/20 bg-white/5" : "border-transparent bg-zinc-800/50"
                             )}
                         >
-                            {/* Progress Bar */}
                             <motion.div
                                 className={cn("absolute top-0 left-0 h-full", isVoted ? "bg-white/20" : "bg-white/5")}
                                 animate={{ width: `${percent}%` }}
                                 transition={{ duration: 0.5 }}
                             />
-
                             <div className="absolute inset-0 flex items-center justify-between px-4 text-sm pointer-events-none">
                                 <span className={cn("transition-colors", isVoted ? "text-white font-medium" : "text-zinc-400")}>
                                     {opt.name}
                                 </span>
                                 <span className="text-zinc-500 font-mono text-xs">{percent.toFixed(1)}%</span>
                             </div>
-
-                            {/* Checkmark for voted state */}
                             {isVoted && (
                                 <motion.div
                                     initial={{ scale: 0, opacity: 0 }}
@@ -277,67 +264,41 @@ const DemoPollCard = ({ id, title, options, votedIndex }) => {
 };
 
 const LiveDemoModal = ({ onClose }) => {
-    const [cursor, setCursor] = useState({ x: -50, y: -50 }); // Start off-screen
+    const [cursor, setCursor] = useState({ x: -50, y: -50 });
     const [isClicking, setIsClicking] = useState(false);
-    const [movieState, setMovieState] = useState({
-        poll1: -1, // -1 = none voted
-        poll2: -1
-    });
+    const [movieState, setMovieState] = useState({ poll1: -1, poll2: -1 });
 
-    // The "Script" for the video
     useEffect(() => {
         const runScript = async () => {
             const wait = (ms) => new Promise(res => setTimeout(res, ms));
-
-            // Helper to move cursor to element
             const moveTo = (elementId) => {
                 const el = document.getElementById(elementId);
                 if (el) {
                     const rect = el.getBoundingClientRect();
-                    // Aim for center-ish
-                    setCursor({
-                        x: rect.left + rect.width * 0.7,
-                        y: rect.top + rect.height * 0.5
-                    });
+                    setCursor({ x: rect.left + rect.width * 0.7, y: rect.top + rect.height * 0.5 });
                 }
             };
-
             await wait(800);
-
-            // 1. Target first poll, first option
-            moveTo("demo-p1-opt-0"); // Mobile App Redesign
-            await wait(1000); // Travel time
-
-            // 2. Click
+            moveTo("demo-p1-opt-0");
+            await wait(1000);
             setIsClicking(true);
             await wait(150);
-            setMovieState(s => ({ ...s, poll1: 0 })); // Update state mid-click
+            setMovieState(s => ({ ...s, poll1: 0 }));
             await wait(150);
             setIsClicking(false);
-
-            await wait(800); // Admire the vote
-
-            // 3. Target second poll, second option
-            moveTo("demo-p2-opt-1"); // Kyoto
+            await wait(800);
+            moveTo("demo-p2-opt-1");
             await wait(1000);
-
-            // 4. Click
             setIsClicking(true);
             await wait(150);
             setMovieState(s => ({ ...s, poll2: 1 }));
             await wait(150);
             setIsClicking(false);
-
             await wait(1200);
-            // 5. Move to close? Or just idle. 
-            // Let's drift away
             setCursor({ x: window.innerWidth * 0.8, y: window.innerHeight * 0.8 });
-
-            // Close the modal after a short delay
             await wait(2000);
             onClose();
         };
-
         runScript();
     }, [onClose]);
 
@@ -350,7 +311,6 @@ const LiveDemoModal = ({ onClose }) => {
             onClick={onClose}
         >
             <Cursor x={cursor.x} y={cursor.y} isClicking={isClicking} />
-
             <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -359,7 +319,6 @@ const LiveDemoModal = ({ onClose }) => {
                 onClick={e => e.stopPropagation()}
             >
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-
                 <div className="flex justify-between items-start mb-8">
                     <div>
                         <h2 className="text-3xl font-bold mb-2 tracking-tight">Live Session</h2>
@@ -370,30 +329,10 @@ const LiveDemoModal = ({ onClose }) => {
                     </div>
                     <button onClick={onClose} className="p-2 text-zinc-600 hover:text-white transition-colors">✕</button>
                 </div>
-
                 <div className="grid gap-6">
-                    <DemoPollCard
-                        id="demo-p1"
-                        title="Q3 Roadmap Priority"
-                        votedIndex={movieState.poll1}
-                        options={[
-                            { name: "Mobile App Redesign", percent: 35 },
-                            { name: "API Integration", percent: 30 },
-                            { name: "User Analytics", percent: 35 }
-                        ]}
-                    />
-                    <DemoPollCard
-                        id="demo-p2"
-                        title="Team Offsite Location"
-                        votedIndex={movieState.poll2}
-                        options={[
-                            { name: "Bali, Indonesia", percent: 45 },
-                            { name: "Kyoto, Japan", percent: 40 },
-                            { name: "Lisbon, Portugal", percent: 15 }
-                        ]}
-                    />
+                    <DemoPollCard id="demo-p1" title="Q3 Roadmap Priority" votedIndex={movieState.poll1} options={[{ name: "Mobile App Redesign", percent: 35 }, { name: "API Integration", percent: 30 }, { name: "User Analytics", percent: 35 }]} />
+                    <DemoPollCard id="demo-p2" title="Team Offsite Location" votedIndex={movieState.poll2} options={[{ name: "Bali, Indonesia", percent: 45 }, { name: "Kyoto, Japan", percent: 40 }, { name: "Lisbon, Portugal", percent: 15 }]} />
                 </div>
-
                 <div className="mt-8 text-center">
                     <p className="text-zinc-600 text-sm font-mono animate-pulse">Waiting for admin...</p>
                 </div>
@@ -402,87 +341,48 @@ const LiveDemoModal = ({ onClose }) => {
     );
 };
 
-const Landing = ({ onSignIn }) => {
-    const { scrollYProgress } = useScroll();
+const Landing = () => {
+    const navigate = useNavigate();
     const [showDemo, setShowDemo] = useState(false);
 
     return (
-        <div className="min-h-screen bg-black text-white selection:bg-white/20 overflow-hidden flex flex-col relative font-sans">
+        <div className="min-h-screen bg-black text-white selection:bg-white/20 overflow-x-hidden flex flex-col relative font-sans">
             <MouseGradient />
             <GridPattern />
 
-            {/* Header */}
             <nav className="absolute top-0 w-full p-6 flex justify-between items-center z-30">
-                <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex items-center gap-2"
-                >
+                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center font-bold text-sm">V</div>
                     <span className="font-bold tracking-tight text-sm">VoteFore</span>
                 </motion.div>
-
-                <motion.button
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    onClick={onSignIn}
-                    className="px-5 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors border border-transparent hover:border-zinc-800 rounded-full"
-                >
+                <motion.button initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} onClick={() => navigate('/sign-in')} className="px-5 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors border border-transparent hover:border-zinc-800 rounded-full">
                     Sign In
                 </motion.button>
             </nav>
 
-            {/* Main Content */}
             <div className="container mx-auto px-6 relative z-10 flex-grow flex flex-col justify-center">
-
                 <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[80vh]">
-
-                    {/* Left Text Content */}
                     <div className="text-center lg:text-left pt-20 lg:pt-0">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.5 }}
-                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-zinc-400 text-xs font-medium mb-10 backdrop-blur-md"
-                        >
+                        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-zinc-400 text-xs font-medium mb-10 backdrop-blur-md">
                             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                             Future of Consensus
                         </motion.div>
-
                         <h1 className="text-6xl md:text-8xl font-bold tracking-tighter mb-8 leading-[0.9]">
                             <AnimatedText text="Decide" className="text-zinc-500 justify-center lg:justify-start" delay={0.1} />
                             <AnimatedText text="Together." className="text-white justify-center lg:justify-start" delay={0.2} />
                         </h1>
-
-                        <motion.p
-                            initial={{ opacity: 0, filter: "blur(5px)" }}
-                            animate={{ opacity: 1, filter: "blur(0px)" }}
-                            transition={{ delay: 0.6, duration: 1 }}
-                            className="text-lg text-zinc-500 mb-12 max-w-md mx-auto lg:mx-0 leading-relaxed font-light"
-                        >
-                            Minimalist, real-time voting for teams that move fast.
-                            No clutter, just results.
+                        <motion.p initial={{ opacity: 0, filter: "blur(5px)" }} animate={{ opacity: 1, filter: "blur(0px)" }} transition={{ delay: 0.6, duration: 1 }} className="text-lg text-zinc-500 mb-12 max-w-md mx-auto lg:mx-0 leading-relaxed font-light">
+                            Minimalist, real-time voting for teams that move fast. No clutter, just results.
                         </motion.p>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.8, duration: 0.8 }}
-                            className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-                        >
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                             <button className="group px-8 py-4 bg-white text-black rounded-full font-medium hover:bg-zinc-200 transition-all flex items-center justify-center gap-2">
                                 Start Voting
                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </button>
-                            <button
-                                onClick={() => setShowDemo(true)}
-                                className="px-8 py-4 bg-transparent border border-zinc-800 hover:bg-white/5 text-zinc-300 rounded-full font-medium transition-all"
-                            >
+                            <button onClick={() => setShowDemo(true)} className="px-8 py-4 bg-transparent border border-zinc-800 hover:bg-white/5 text-zinc-300 rounded-full font-medium transition-all">
                                 Live Demo
                             </button>
-                        </motion.div>
-
-                        {/* Quick Stats / Trust */}
+                        </div>
                         <div className="mt-20 flex gap-12 justify-center lg:justify-start border-t border-white/5 pt-10">
                             <MinimalFeature icon={Zap} title="Real-time" delay={1.0} />
                             <MinimalFeature icon={ShieldCheck} title="Verified" delay={1.1} />
@@ -490,34 +390,70 @@ const Landing = ({ onSignIn }) => {
                         </div>
                     </div>
 
-                    {/* Right Visual Content */}
-                    <div className="relative perspective-1000 h-[500px] flex items-center justify-center">
-                        {/* Abstract Glow Behind Card */}
-                        <motion.div
-                            animate={{
-                                scale: [1, 1.2, 1],
-                                opacity: [0.3, 0.5, 0.3]
-                            }}
-                            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute inset-0 bg-gradient-to-tr from-zinc-800/30 to-zinc-500/10 rounded-full blur-[80px]"
-                        />
+                    <div className="relative h-[600px] w-full flex items-center justify-center">
+                        <div className="absolute inset-0 z-0 pointer-events-none">
+                            {/* Concert Crowd */}
+                            <motion.img
+                                src={CONCERT_IMAGES[0]}
+                                alt="Concert Crowd"
+                                className="absolute top-0 right-0 w-72 h-72 object-cover rounded-3xl opacity-40 grayscale contrast-125 blur-[1px] -rotate-6 translate-x-10 -translate-y-5 shadow-2xl"
+                                animate={{ y: [0, -15, 0] }}
+                                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                            />
+                            {/* Concert Stage */}
+                            <motion.img
+                                src={CONCERT_IMAGES[1]}
+                                alt="Concert Stage"
+                                className="absolute bottom-5 left-0 w-64 h-64 object-cover rounded-3xl opacity-40 grayscale contrast-125 blur-[1px] rotate-6 -translate-x-10 translate-y-5 shadow-2xl"
+                                animate={{ y: [0, 15, 0] }}
+                                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                            />
+                            {/* Audience */}
+                            <motion.img
+                                src={CONCERT_IMAGES[2]}
+                                alt="Audience"
+                                className="absolute top-1/2 left-1/4 w-40 h-40 object-cover rounded-3xl opacity-20 grayscale contrast-150 blur-[2px] -rotate-12 -translate-x-20 shadow-2xl"
+                                animate={{ scale: [1, 1.05, 1] }}
+                                transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                            />
 
+                            {/* Scan QR Element - Now shifted "behind" like the images */}
+                            <motion.div
+                                initial={{ opacity: 0, x: -50 }}
+                                animate={{ 
+                                    opacity: 0.4, 
+                                    x: 0,
+                                    y: [0, -10, 0],
+                                    rotate: [-12, -8, -12] 
+                                }}
+                                transition={{ 
+                                    opacity: { delay: 1.2, duration: 1 },
+                                    y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+                                    rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                                }}
+                                className="absolute left-0 bottom-24 bg-white text-black p-4 rounded-3xl shadow-2xl flex flex-col items-center gap-2 grayscale contrast-125"
+                            >
+                                <QrCode className="w-10 h-10 opacity-80" />
+                                <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Scan to Join</span>
+                            </motion.div>
+
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/20" />
+                        </div>
+
+                        {/* Main Voting UI is the only thing on the Z-layer foreground */}
                         <VotingCard />
 
-                        {/* Minimal floating elements */}
                         <motion.div
                             animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
                             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute top-10 right-10 md:right-0 w-20 h-20 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center z-0"
+                            className="absolute bottom-10 right-0 w-20 h-20 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center z-10 opacity-60"
                         >
                             <BarChart2 className="text-zinc-500 w-8 h-8" />
                         </motion.div>
                     </div>
-
                 </div>
             </div>
 
-            {/* Modals */}
             {showDemo && <LiveDemoModal onClose={() => setShowDemo(false)} />}
         </div>
     );
