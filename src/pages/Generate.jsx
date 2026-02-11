@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QRCodeCanvas } from 'qrcode.react';
-import { ArrowRight, Download, Share2, Sparkles, Copy, Check, History, ExternalLink, Trash2 } from 'lucide-react';
+import { ArrowRight, Download, Share2, Sparkles, Copy, Check, History, ExternalLink, Trash2, Play } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -16,13 +16,11 @@ const Generate = () => {
     const [url, setUrl] = useState('https://votefore.com/join/123');
     const [copied, setCopied] = useState(false);
     
-    // History state initialized from localStorage
     const [history, setHistory] = useState(() => {
         const saved = localStorage.getItem('qr_history');
         return saved ? JSON.parse(saved) : [];
     });
 
-    // Save history to localStorage whenever it changes
     useEffect(() => {
         localStorage.setItem('qr_history', JSON.stringify(history));
     }, [history]);
@@ -34,7 +32,7 @@ const Generate = () => {
             url: newUrl,
             timestamp: new Date().toLocaleDateString()
         };
-        setHistory(prev => [newEntry, ...prev].slice(0, 5)); // Keep last 5
+        setHistory(prev => [newEntry, ...prev].slice(0, 5));
     };
 
     const downloadQRCode = () => {
@@ -43,7 +41,6 @@ const Generate = () => {
             .toDataURL("image/png")
             .replace("image/png", "image/octet-stream");
         
-        // Add to history when downloaded
         addToHistory(url);
 
         let downloadLink = document.createElement("a");
@@ -57,21 +54,24 @@ const Generate = () => {
     const copyToClipboard = () => {
         navigator.clipboard.writeText(url);
         setCopied(true);
-        addToHistory(url); // Also add to history when copied
+        addToHistory(url);
         setTimeout(() => setCopied(false), 2000);
     };
 
     const clearHistory = () => setHistory([]);
 
+    const handleStartPoll = () => {
+        // Logic to transition to admin poll view
+        navigate('/admin/poll'); 
+    };
+
     return (
         <div className="min-h-screen bg-black text-white font-sans selection:bg-white/20">
-            {/* Background Decorations */}
             <div className="fixed inset-0 z-0 pointer-events-none">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-white/5 rounded-full blur-[120px]" />
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:40px_40px]" />
             </div>
 
-            {/* Header Navigation */}
             <nav className="relative z-10 p-6 flex justify-between items-center backdrop-blur-md border-b border-white/5">
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
                     <div className="w-8 h-8 rounded-lg bg-white text-black flex items-center justify-center font-black">V</div>
@@ -90,9 +90,7 @@ const Generate = () => {
             <main className="relative z-10 container mx-auto px-6 pt-16 pb-20">
                 <div className="max-w-4xl mx-auto space-y-16">
                     
-                    {/* Top Section: Generator */}
                     <div className="grid md:grid-cols-2 gap-12 items-start">
-                        {/* Left: Input Controls */}
                         <motion.div 
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -124,18 +122,26 @@ const Generate = () => {
                                 </div>
                             </div>
 
+                            {/* Start Poll Button for Admin */}
+                            <button 
+                                onClick={handleStartPoll}
+                                className="w-full flex items-center justify-center gap-3 py-4 bg-zinc-100 hover:bg-white text-black rounded-2xl font-bold transition-all transform active:scale-[0.98] shadow-lg shadow-white/5"
+                            >
+                                <Play className="w-5 h-5 fill-black" />
+                                Start Live Poll
+                            </button>
+
                             <div className="p-6 rounded-3xl bg-white/5 border border-white/5 space-y-4">
                                 <div className="flex items-center gap-3">
                                     <Sparkles className="w-5 h-5 text-zinc-400" />
                                     <h3 className="font-bold text-sm">Pro Tip</h3>
                                 </div>
                                 <p className="text-sm text-zinc-500 font-light">
-                                    This QR is optimized for high-speed scanning even in low-light concert environments.
+                                    Click "Start Live Poll" once your audience is ready to see the results in real-time.
                                 </p>
                             </div>
                         </motion.div>
 
-                        {/* Right: QR Preview */}
                         <motion.div 
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -162,7 +168,7 @@ const Generate = () => {
                             <div className="flex w-full gap-4">
                                 <button 
                                     onClick={downloadQRCode}
-                                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-white text-black rounded-2xl font-bold hover:bg-zinc-200 transition-all active:scale-95"
+                                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-zinc-900 border border-white/10 text-white rounded-2xl font-bold hover:bg-zinc-800 transition-all active:scale-95"
                                 >
                                     <Download className="w-4 h-4" />
                                     Download PNG
@@ -174,7 +180,6 @@ const Generate = () => {
                         </motion.div>
                     </div>
 
-                    {/* Bottom Section: History */}
                     <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
