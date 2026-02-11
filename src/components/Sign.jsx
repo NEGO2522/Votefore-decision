@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Chrome, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { auth, googleProvider } from '../firebase'; // Adjust path if needed
+import { auth, googleProvider } from '../firebase'; 
 import { sendSignInLinkToEmail, signInWithPopup } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
 
 const Sign = () => {
+    const navigate = useNavigate(); // 2. Initialize navigate
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [info, setInfo] = useState({ type: '', text: '' });
 
     const actionCodeSettings = {
-        // This is where the user will be redirected after clicking the link
+        // Point this to your "finish-sign-in" route
         url: window.location.origin + '/finish-sign-in', 
         handleCodeInApp: true,
     };
@@ -24,6 +26,7 @@ const Sign = () => {
             await sendSignInLinkToEmail(auth, email, actionCodeSettings);
             window.localStorage.setItem('emailForSignIn', email);
             setInfo({ type: 'success', text: 'Check your inbox! We sent a login link.' });
+            // Note: We don't navigate yet because the user must click the link in their email
         } catch (error) {
             setInfo({ type: 'error', text: error.message });
         } finally {
@@ -35,7 +38,8 @@ const Sign = () => {
         setIsLoading(true);
         try {
             await signInWithPopup(auth, googleProvider);
-            // On success, redirect or handle user state
+            // 3. Navigate to landing on success
+            navigate('/'); 
         } catch (error) {
             setInfo({ type: 'error', text: error.message });
         } finally {
@@ -45,9 +49,10 @@ const Sign = () => {
 
     return (
         <div className="min-h-screen bg-black text-white font-sans selection:bg-white/20 flex items-center justify-center relative overflow-hidden">
+            {/* ... (Rest of your UI code remains exactly the same) ... */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-500/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow"></div>
-                <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] mix-blend-screen animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+                <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-500/20 rounded-full blur-[120px] mix-blend-screen"></div>
+                <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] mix-blend-screen"></div>
             </div>
 
             <div className="fixed inset-0 z-0 pointer-events-none bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
@@ -58,9 +63,9 @@ const Sign = () => {
                 className="w-full max-w-md relative z-10"
             >
                 <div className="bg-black/40 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl">
-                    <div className="mb-8">
+                    <div className="mb-8 text-center">
                         <h1 className="text-3xl font-bold mb-2 tracking-tight">Welcome back</h1>
-                        <p className="text-zinc-500">Enter your email to receive a login link.</p>
+                        <p className="text-zinc-500">Sign in to start controlling the stage.</p>
                     </div>
 
                     {info.text && (
@@ -95,13 +100,9 @@ const Sign = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
                         >
-                            {isLoading ? (
-                                <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
-                            ) : (
-                                "Send Login Link"
-                            )}
+                            {isLoading ? <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin"></div> : "Send Login Link"}
                         </button>
                     </form>
 

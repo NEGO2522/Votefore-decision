@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Sign from './components/Sign';
+import Profile from './pages/Profile'; // Import the new Profile component
 import PrivacyPolicy from './components/Privacy_Policy';
 import ContactUs from './components/ContactUs';
 
@@ -18,6 +19,9 @@ function App() {
         {/* Main Pages */}
         <Route path="/" element={<Landing />} />
         <Route path="/sign-in" element={<Sign />} />
+        
+        {/* New Profile Route */}
+        <Route path="/profile" element={<Profile />} />
         
         {/* Support & Legal */}
         <Route path="/contact" element={<ContactUs />} />
