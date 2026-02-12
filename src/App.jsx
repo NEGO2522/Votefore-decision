@@ -5,7 +5,8 @@ import Profile from './pages/Profile';
 import PrivacyPolicy from './components/Privacy_Policy';
 import ContactUs from './components/ContactUs';
 import Generate from './pages/Generate';
-import AdminPoll from './pages/AdminPoll'; // Import the AdminPoll component
+import AdminPoll from './pages/AdminPoll';
+import UserPoll from './pages/UserPoll';
 
 const FinishSignIn = () => (
   <div className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -25,8 +26,17 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/generate" element={<Generate />} />
         
-        {/* Admin Control Route */}
+        {/* --- POLL ROUTES --- */}
+        
+        {/* Admin Control Route (Only for the creator) */}
+        {/* Access via: /admin/poll/2 */}
         <Route path="/admin/poll/:pollId" element={<AdminPoll />} />
+        
+        {/* User Join Route (For participants/voters) */}
+        {/* Access via: /join/2 */}
+        <Route path="/join/:pollId" element={<UserPoll />} />
+        
+        {/* ------------------- */}
         
         {/* Support & Legal */}
         <Route path="/contact" element={<ContactUs />} />

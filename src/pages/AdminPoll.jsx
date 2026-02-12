@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, LogOut, RotateCcw, Pause, Play, ArrowLeft, 
-  Trophy, Plus, X, Send, BarChart3, Clock 
+  Trophy, Plus, X, Send, BarChart3, Clock, Copy, Link as LinkIcon, Check
 } from 'lucide-react';
 
 // 1. Import Firebase
@@ -11,20 +11,21 @@ import { db } from '../firebase';
 import { ref, onValue, set, update } from "firebase/database";
 
 const AdminPoll = () => {
-    const { pollId } = useParams(); // Gets the ID from the URL: /admin/poll/:pollId
+    const { pollId } = useParams();
     const navigate = useNavigate();
     
     // UI & Local States
     const [isActive, setIsActive] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [pollData, setPollData] = useState(null);
+    const [copied, setCopied] = useState(false);
     
     // Modal Form States
     const [newQuestion, setNewQuestion] = useState("");
     const [newOptions, setNewOptions] = useState(["", ""]);
-    const [timeLimit, setTimeLimit] = useState(60); // Default 1 minute
+    const [timeLimit, setTimeLimit] = useState(60);
 
-    // 2. Sync with Firebase on Component Mount
+    // 2. Sync with Firebase
     useEffect(() => {
         if (!pollId) return;
         const pollRef = ref(db, `polls/${pollId}`);
@@ -40,7 +41,7 @@ const AdminPoll = () => {
         return () => unsubscribe();
     }, [pollId]);
 
-    // 3. Timer Logic (Server-Side Sync)
+    // 3. Timer Logic
     useEffect(() => {
         let timer;
         if (isActive && pollData?.timeLeft > 0) {
@@ -49,18 +50,23 @@ const AdminPoll = () => {
                 update(ref(db, `polls/${pollId}`), { timeLeft: newTime });
             }, 1000);
         } else if (pollData?.timeLeft === 0 && isActive) {
-            // Auto-pause when time runs out
             handleToggleActive(false);
         }
         return () => clearInterval(timer);
     }, [isActive, pollData?.timeLeft, pollId]);
 
-    // 4. Create/Initialize the Poll in DB
+    // 4. Copy Link Logic
+    const copyJoinLink = () => {
+        const joinUrl = `${window.location.origin}/join/${pollId}`;
+        navigator.clipboard.writeText(joinUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
     const handleCreatePoll = async (e) => {
         e.preventDefault();
         const colors = ['bg-blue-500', 'bg-purple-500', 'bg-emerald-500', 'bg-orange-500', 'bg-pink-500'];
         
-        // Transform options into an object for Firebase
         const optionsObj = {};
         newOptions.filter(opt => opt.trim() !== "").forEach((opt, i) => {
             const id = `opt_${i}`;
@@ -78,7 +84,6 @@ const AdminPoll = () => {
             isActive: true,
             timeLeft: parseInt(timeLimit),
             totalVotes: 0,
-            participantCount: 0, // In a real app, track this via a separate 'presence' node
             createdAt: new Date().toISOString()
         };
 
@@ -101,7 +106,6 @@ const AdminPoll = () => {
         });
     };
 
-    // Calculate dynamic values for display
     const optionsArray = pollData?.options ? Object.values(pollData.options) : [];
     const totalVotes = pollData?.totalVotes || 0;
 
@@ -120,19 +124,20 @@ const AdminPoll = () => {
                         <ArrowLeft className="w-5 h-5" />
                     </button>
                     <div>
-                        <h2 className="font-bold tracking-tight text-sm text-zinc-400">ADMIN CONTROL PANEL</h2>
+                        <h2 className="font-bold tracking-tight text-sm text-zinc-400 uppercase">Admin Dashboard</h2>
                         <h1 className="font-black tracking-tighter">POLL #{pollId}</h1>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                     {pollData && (
-                        <div className="px-4 py-2 bg-zinc-900 border border-white/10 rounded-xl flex items-center gap-3">
-                            <Clock className="w-4 h-4 text-zinc-500" />
-                            <span className={cn("font-mono font-bold", pollData.timeLeft < 10 ? "text-red-500 animate-pulse" : "text-white")}>
-                                {Math.floor(pollData.timeLeft / 60)}:{(pollData.timeLeft % 60).toString().padStart(2, '0')}
-                            </span>
-                        </div>
+                        <button 
+                            onClick={copyJoinLink}
+                            className="flex items-center gap-2 px-4 py-2 bg-zinc-900 border border-white/10 rounded-xl font-bold text-sm hover:bg-zinc-800 transition-all text-zinc-300"
+                        >
+                            {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                            {copied ? "Copied!" : "Copy Voter Link"}
+                        </button>
                     )}
                     <button 
                         onClick={() => setShowCreateModal(true)}
