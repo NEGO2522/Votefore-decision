@@ -409,7 +409,7 @@ const Landing = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-black text-white selection:bg-white/20 overflow-x-hidden flex flex-col relative font-sans">
+        <div className="h-screen bg-black text-white selection:bg-white/20 overflow-hidden flex flex-col relative font-sans">
             <MouseGradient />
             <GridPattern />
 
@@ -443,7 +443,7 @@ const Landing = () => {
                 </motion.div>
             </nav>
 
-            <main className="container mx-auto px-6 relative z-10 pt-32 pb-20">
+            <main className="container mx-auto px-6 relative z-10 pt-28 pb-10 flex flex-col justify-center h-full">
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
                     <div className="text-center lg:text-left">
                         <motion.div 
@@ -485,7 +485,7 @@ const Landing = () => {
                             </button>
                         </div>
                         
-                        <div className="mt-20 flex gap-8 justify-center lg:justify-start border-t border-white/5 pt-10">
+                        <div className="mt-16 flex gap-8 justify-center lg:justify-start border-t border-white/5 pt-10">
                             <MinimalFeature icon={Radio} title="Instant" delay={1.0} />
                             <MinimalFeature icon={Users} title="Scalable" delay={1.1} />
                             <MinimalFeature icon={Zap} title="Live" delay={1.2} />
@@ -524,30 +524,49 @@ const Landing = () => {
                 </div>  
             </main>
 
-            {/* Social Icons Fixed Bottom Right */}
-            <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4">
-                <motion.a
-                    href="https://instagram.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 1.5 }}
-                    className="p-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-zinc-400 hover:text-white hover:bg-white/10 hover:scale-110 transition-all shadow-lg"
-                >
-                    <Instagram className="w-5 h-5" />
-                </motion.a>
-                <motion.a
-                    href="https://linkedin.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 1.6 }}
-                    className="p-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-zinc-400 hover:text-white hover:bg-white/10 hover:scale-110 transition-all shadow-lg"
-                >
-                    <Linkedin className="w-5 h-5" />
-                </motion.a>
+            {/* Bottom Controls (Socials + Legal) */}
+            <div className="fixed bottom-8 right-8 z-50 flex items-end gap-6">
+                {/* Legal Links */}
+                <div className="flex gap-4 mb-2">
+                    <button 
+                        onClick={() => navigate('/privacy')} 
+                        className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-white transition-colors"
+                    >
+                        Privacy Policy
+                    </button>
+                    <button 
+                        onClick={() => navigate('/contact')} 
+                        className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-white transition-colors"
+                    >
+                        Contact Us
+                    </button>
+                </div>
+
+                {/* Social Icons Stack */}
+                <div className="flex flex-col gap-4">
+                    <motion.a
+                        href="https://instagram.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1.5 }}
+                        className="p-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-zinc-400 hover:text-white hover:bg-white/10 hover:scale-110 transition-all shadow-lg"
+                    >
+                        <Instagram className="w-5 h-5" />
+                    </motion.a>
+                    <motion.a
+                        href="https://linkedin.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1.6 }}
+                        className="p-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-zinc-400 hover:text-white hover:bg-white/10 hover:scale-110 transition-all shadow-lg"
+                    >
+                        <Linkedin className="w-5 h-5" />
+                    </motion.a>
+                </div>
             </div>
 
             <AnimatePresence>
