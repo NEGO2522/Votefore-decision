@@ -9,7 +9,9 @@ import {
     Users, 
     Radio, 
     User, 
-    X
+    X,
+    Instagram,
+    Linkedin
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -238,8 +240,6 @@ const LiveDemoModal = ({ onClose }) => {
     const [isClicking, setIsClicking] = useState(false);
     const [isHoveringClose, setIsHoveringClose] = useState(false); 
     const [movieState, setMovieState] = useState({ poll1: -1, poll2: -1 });
-    
-    // NEW: View state to toggle between QR and Polls
     const [view, setView] = useState('qr'); 
 
     useEffect(() => {
@@ -263,7 +263,6 @@ const LiveDemoModal = ({ onClose }) => {
                 }
             };
 
-            // 1. Show QR Code first
             await wait(1500);
             moveTo("demo-qr-container");
             await wait(800);
@@ -271,11 +270,9 @@ const LiveDemoModal = ({ onClose }) => {
             await wait(200);
             setIsClicking(false);
             
-            // 2. Transition to Polls
             if(isMounted) setView('demo');
-            await wait(800);
+            await wait(1000);
 
-            // 3. Automate Poll 1
             moveTo("demo-p1-opt-0");
             await wait(800);
             setIsClicking(true);
@@ -283,8 +280,7 @@ const LiveDemoModal = ({ onClose }) => {
             await wait(200);
             setIsClicking(false);
             
-            // 4. Automate Poll 2
-            await wait(800);
+            await wait(1000);
             moveTo("demo-p2-opt-1");
             await wait(800);
             setIsClicking(true);
@@ -292,8 +288,7 @@ const LiveDemoModal = ({ onClose }) => {
             await wait(200);
             setIsClicking(false);
             
-            // 5. Close
-            await wait(1000);
+            await wait(1500);
             moveTo("demo-close-btn", true);
             await wait(800);
             setIsClicking(true);
@@ -322,7 +317,6 @@ const LiveDemoModal = ({ onClose }) => {
                 className="w-full max-w-lg bg-zinc-950 border border-white/10 rounded-[3rem] p-10 relative shadow-[0_0_50px_-12px_rgba(255,255,255,0.1)]"
                 onClick={e => e.stopPropagation()}
             >
-                {/* Header */}
                 <div className="flex justify-between items-start mb-10">
                     <div>
                         <h2 className="text-2xl font-bold text-white tracking-tight">
@@ -347,7 +341,6 @@ const LiveDemoModal = ({ onClose }) => {
 
                 <AnimatePresence mode="wait">
                     {view === 'qr' ? (
-                        /* QR CODE VIEW */
                         <motion.div
                             key="qr-view"
                             initial={{ opacity: 0, scale: 0.8 }}
@@ -371,7 +364,6 @@ const LiveDemoModal = ({ onClose }) => {
                             </p>
                         </motion.div>
                     ) : (
-                        /* POLLS VIEW */
                         <motion.div
                             key="polls-view"
                             initial={{ opacity: 0, x: 20 }}
@@ -411,11 +403,7 @@ const Landing = () => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setIsLoggedIn(true);
-            } else {
-                setIsLoggedIn(false);
-            }
+            setIsLoggedIn(!!user);
         });
         return () => unsubscribe();
     }, []);
@@ -535,6 +523,32 @@ const Landing = () => {
                     </div>
                 </div>  
             </main>
+
+            {/* Social Icons Fixed Bottom Right */}
+            <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4">
+                <motion.a
+                    href="https://instagram.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1.5 }}
+                    className="p-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-zinc-400 hover:text-white hover:bg-white/10 hover:scale-110 transition-all shadow-lg"
+                >
+                    <Instagram className="w-5 h-5" />
+                </motion.a>
+                <motion.a
+                    href="https://linkedin.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1.6 }}
+                    className="p-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-zinc-400 hover:text-white hover:bg-white/10 hover:scale-110 transition-all shadow-lg"
+                >
+                    <Linkedin className="w-5 h-5" />
+                </motion.a>
+            </div>
 
             <AnimatePresence>
                 {showDemo && <LiveDemoModal onClose={() => setShowDemo(false)} />}
