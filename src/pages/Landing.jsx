@@ -238,6 +238,9 @@ const LiveDemoModal = ({ onClose }) => {
     const [isClicking, setIsClicking] = useState(false);
     const [isHoveringClose, setIsHoveringClose] = useState(false); 
     const [movieState, setMovieState] = useState({ poll1: -1, poll2: -1 });
+    
+    // NEW: View state to toggle between QR and Polls
+    const [view, setView] = useState('qr'); 
 
     useEffect(() => {
         document.body.classList.add('demo-active');
@@ -260,8 +263,19 @@ const LiveDemoModal = ({ onClose }) => {
                 }
             };
 
-            await wait(1000);
+            // 1. Show QR Code first
+            await wait(1500);
+            moveTo("demo-qr-container");
+            await wait(800);
+            setIsClicking(true);
+            await wait(200);
+            setIsClicking(false);
+            
+            // 2. Transition to Polls
+            if(isMounted) setView('demo');
+            await wait(800);
 
+            // 3. Automate Poll 1
             moveTo("demo-p1-opt-0");
             await wait(800);
             setIsClicking(true);
@@ -269,6 +283,7 @@ const LiveDemoModal = ({ onClose }) => {
             await wait(200);
             setIsClicking(false);
             
+            // 4. Automate Poll 2
             await wait(800);
             moveTo("demo-p2-opt-1");
             await wait(800);
@@ -277,6 +292,7 @@ const LiveDemoModal = ({ onClose }) => {
             await wait(200);
             setIsClicking(false);
             
+            // 5. Close
             await wait(1000);
             moveTo("demo-close-btn", true);
             await wait(800);
@@ -294,22 +310,27 @@ const LiveDemoModal = ({ onClose }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl"
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl"
             onClick={onClose}
         >
             <Cursor x={cursor.x} y={cursor.y} isClicking={isClicking} />
             
             <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="w-full max-w-lg bg-zinc-950 border border-white/10 rounded-[2.5rem] p-8 relative shadow-2xl"
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                className="w-full max-w-lg bg-zinc-950 border border-white/10 rounded-[3rem] p-10 relative shadow-[0_0_50px_-12px_rgba(255,255,255,0.1)]"
                 onClick={e => e.stopPropagation()}
             >
-                <div className="flex justify-between items-start mb-8">
+                {/* Header */}
+                <div className="flex justify-between items-start mb-10">
                     <div>
-                        <h2 className="text-2xl font-bold text-white tracking-tight">Interactive Preview</h2>
-                        <p className="text-zinc-500 text-sm mt-1">Simulating crowd participation</p>
+                        <h2 className="text-2xl font-bold text-white tracking-tight">
+                            {view === 'qr' ? "Join the Session" : "Live Participation"}
+                        </h2>
+                        <p className="text-zinc-500 text-sm mt-1">
+                            {view === 'qr' ? "Scan the code to enter the demo" : "Simulating real-time audience feedback"}
+                        </p>
                     </div>
                     
                     <button 
@@ -324,10 +345,60 @@ const LiveDemoModal = ({ onClose }) => {
                     </button>
                 </div>
 
-                <div className="space-y-6">
-                    <DemoPollCard id="demo-p1" title="Select Next Track" votedIndex={movieState.poll1} options={[{ name: "Unreleased Single", percent: 45 }, { name: "Acoustic Solo", percent: 35 }]} />
-                    <DemoPollCard id="demo-p2" title="Light Show Color" votedIndex={movieState.poll2} options={[{ name: "Neon Blue", percent: 60 }, { name: "Laser Crimson", percent: 40 }]} />
-                </div>
+                <AnimatePresence mode="wait">
+                    {view === 'qr' ? (
+                        /* QR CODE VIEW */
+                        <motion.div
+                            key="qr-view"
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+                            className="flex flex-col items-center justify-center py-10"
+                        >
+                            <div 
+                                id="demo-qr-container"
+                                className="p-8 bg-white rounded-[2rem] shadow-2xl shadow-white/5 relative group"
+                            >
+                                <QrCode className="w-32 h-32 text-black" strokeWidth={1.5} />
+                                <motion.div 
+                                    animate={{ top: ['0%', '100%', '0%'] }}
+                                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                    className="absolute left-0 right-0 h-0.5 bg-red-500/50 shadow-[0_0_10px_red]"
+                                />
+                            </div>
+                            <p className="mt-8 text-zinc-400 font-mono text-[10px] uppercase tracking-[0.2em] animate-pulse">
+                                Initializing Secure Link...
+                            </p>
+                        </motion.div>
+                    ) : (
+                        /* POLLS VIEW */
+                        <motion.div
+                            key="polls-view"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="space-y-6"
+                        >
+                            <DemoPollCard 
+                                id="demo-p1" 
+                                title="Select Next Track" 
+                                votedIndex={movieState.poll1} 
+                                options={[
+                                    { name: "Unreleased Single", percent: 45 }, 
+                                    { name: "Acoustic Solo", percent: 35 }
+                                ]} 
+                            />
+                            <DemoPollCard 
+                                id="demo-p2" 
+                                title="Light Show Color" 
+                                votedIndex={movieState.poll2} 
+                                options={[
+                                    { name: "Neon Blue", percent: 60 }, 
+                                    { name: "Laser Crimson", percent: 40 }
+                                ]} 
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </motion.div>
         </motion.div>
     );
