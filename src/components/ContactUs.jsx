@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
     ArrowLeft, Send, Mail, Phone, 
-    Instagram, Twitter, Linkedin, Youtube 
+    Instagram, Twitter, Linkedin, Youtube,
+    User, ArrowRight // Added User and ArrowRight for the nav
 } from 'lucide-react';
 
 const ContactUs = () => {
@@ -17,17 +18,18 @@ const ContactUs = () => {
     };
 
     // Correct Embed URL for Rambagh, Jaipur (Standard public link)
-    const mapLocationSrc = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.455792942738!2d75.80556207616147!3d26.88900656133486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db60010000001%3A0x6d85949d0124f2f5!2sRambagh%20Palace!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin";
+    const mapLocationSrc = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14234.629050516!2d75.8037418!3d26.8921208!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db421805f952f%3A0x6a053f3e185c7886!2sRambagh%2C%20Jaipur%2C%20Rajasthan!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin";
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white selection:bg-white/20 font-sans relative overflow-x-hidden">
+        /* Changed min-h-screen to h-screen and ensured overflow-hidden to stop scrolling */
+        <div className="h-screen bg-[#050505] text-white selection:bg-white/20 font-sans relative overflow-hidden">
             {/* Background Aesthetics */}
             <div className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(circle_at_center,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px]"></div>
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 blur-[150px] rounded-full pointer-events-none"></div>
 
-            {/* Fixed Header Navigation (Same as Profile.jsx) */}
-            <nav className="fixed top-0 w-full p-6 flex justify-between items-center z-50">
+            {/* Updated Header Navigation (Matching Landing/Generate) */}
+            <nav className="fixed top-0 w-full p-6 flex justify-between items-center z-50 backdrop-blur-md border-b border-white/5">
                 <div 
                     className="flex items-center gap-3 cursor-pointer group"
                     onClick={() => navigate('/')}
@@ -38,13 +40,21 @@ const ContactUs = () => {
                     <span className="font-bold tracking-tighter text-xl">VoteFore</span>
                 </div>
 
-                <button
-                    onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-sm font-medium"
-                >
-                    <ArrowLeft className="w-4 h-4" />
-                    Back
-                </button>
+                <div className="flex items-center gap-4">
+                    <button 
+                        onClick={() => navigate('/')} 
+                        className="hidden md:flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors group"
+                    >
+                        Home
+                        <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                    <button 
+                        className="p-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all text-zinc-400 hover:text-white"
+                        aria-label="User Profile"
+                    >
+                        <User className="w-5 h-5" />
+                    </button>
+                </div>
             </nav>
 
             <main className="relative z-10 container mx-auto px-6 pt-32 pb-20">
@@ -69,13 +79,13 @@ const ContactUs = () => {
                         <section className="space-y-6">
                             <h3 className="text-xs font-mono uppercase tracking-[0.3em] text-zinc-500">Essentials</h3>
                             <div className="space-y-4">
-                                <a href="mailto:hello@votefore.live" className="group flex items-center gap-4 text-zinc-300 hover:text-white transition-colors">
+                                <a href="mailto:nextgenova28@gmail.com" className="group flex items-center gap-4 text-zinc-300 hover:text-white transition-colors">
                                     <Mail className="w-5 h-5 text-zinc-500 group-hover:text-blue-400 transition-colors" />
-                                    <span className="text-lg font-light">hello@votefore.live</span>
+                                    <span className="text-lg font-light">nextgenova27@gmail.com</span>
                                 </a>
                                 <a href="tel:+911412385700" className="group flex items-center gap-4 text-zinc-300 hover:text-white transition-colors">
                                     <Phone className="w-5 h-5 text-zinc-500 group-hover:text-blue-400 transition-colors" />
-                                    <span className="text-lg font-light">+91 141 238 5700</span>
+                                    <span className="text-lg font-light">+91 9413973399</span>
                                 </a>
                             </div>
                         </section>

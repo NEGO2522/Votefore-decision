@@ -11,7 +11,8 @@ import {
     User, 
     X,
     Instagram,
-    Linkedin
+    Twitter,
+    Youtube
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -542,10 +543,21 @@ const Landing = () => {
                     </button>
                 </div>
 
-                {/* Social Icons Stack */}
+                {/* Social Icons Stack - Updated with Twitter and Youtube, Removed LinkedIn */}
                 <div className="flex flex-col gap-4">
                     <motion.a
-                        href="https://instagram.com"
+                        href="https://youtube.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1.4 }}
+                        className="p-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-zinc-400 hover:text-white hover:bg-white/10 hover:scale-110 transition-all shadow-lg"
+                    >
+                        <Youtube className="w-5 h-5" />
+                    </motion.a>
+                    <motion.a
+                        href="https://twitter.com"
                         target="_blank"
                         rel="noopener noreferrer"
                         initial={{ opacity: 0, x: 20 }}
@@ -553,10 +565,10 @@ const Landing = () => {
                         transition={{ delay: 1.5 }}
                         className="p-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-zinc-400 hover:text-white hover:bg-white/10 hover:scale-110 transition-all shadow-lg"
                     >
-                        <Instagram className="w-5 h-5" />
+                        <Twitter className="w-5 h-5" />
                     </motion.a>
                     <motion.a
-                        href="https://linkedin.com"
+                        href="https://instagram.com"
                         target="_blank"
                         rel="noopener noreferrer"
                         initial={{ opacity: 0, x: 20 }}
@@ -564,7 +576,7 @@ const Landing = () => {
                         transition={{ delay: 1.6 }}
                         className="p-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-zinc-400 hover:text-white hover:bg-white/10 hover:scale-110 transition-all shadow-lg"
                     >
-                        <Linkedin className="w-5 h-5" />
+                        <Instagram className="w-5 h-5" />
                     </motion.a>
                 </div>
             </div>
