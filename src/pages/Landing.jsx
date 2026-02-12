@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useSpring, useMotionValue, AnimatePresence } from 'framer-motion';
-import { 
-    ArrowRight, 
-    Zap, 
-    QrCode, 
-    Music, 
-    Users, 
-    Radio, 
-    User, 
+import {
+    ArrowRight,
+    Zap,
+    QrCode,
+    Music,
+    Users,
+    Radio,
+    User,
     X,
     Instagram,
     Twitter,
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { auth } from '../firebase'; 
+import { auth } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
 // Utility for class merging
@@ -27,7 +27,7 @@ function cn(...inputs) {
 const CONCERT_IMAGES = [
     "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=800&q=80"  
+    "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=800&q=80"
 ];
 
 // --- Sub-Components ---
@@ -48,7 +48,7 @@ const Cursor = ({ x, y, isClicking }) => (
             opacity: { duration: 0.5 }
         }}
         className="fixed top-0 left-0 w-6 h-6 z-[100] pointer-events-none"
-        style={{ marginTop: -5, marginLeft: -5 }} 
+        style={{ marginTop: -5, marginLeft: -5 }}
     >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 3L10.07 19.97L12.58 12.58L19.97 10.07L3 3Z" fill="white" stroke="black" strokeWidth="1.5" strokeLinejoin="round" />
@@ -93,7 +93,7 @@ const GridPattern = () => (
 
 const AnimatedText = ({ text, className, delay = 0 }) => {
     const words = text.split(" ");
-    
+
     return (
         <motion.div
             initial="hidden"
@@ -106,7 +106,7 @@ const AnimatedText = ({ text, className, delay = 0 }) => {
             className={cn("flex flex-wrap", className)}
         >
             {words.map((word, index) => (
-                <motion.span 
+                <motion.span
                     key={index}
                     variants={{
                         visible: { opacity: 1, y: 0, filter: "blur(0px)" },
@@ -239,9 +239,9 @@ const DemoPollCard = ({ id, title, options, votedIndex }) => {
 const LiveDemoModal = ({ onClose }) => {
     const [cursor, setCursor] = useState({ x: -100, y: -100 });
     const [isClicking, setIsClicking] = useState(false);
-    const [isHoveringClose, setIsHoveringClose] = useState(false); 
+    const [isHoveringClose, setIsHoveringClose] = useState(false);
     const [movieState, setMovieState] = useState({ poll1: -1, poll2: -1 });
-    const [view, setView] = useState('qr'); 
+    const [view, setView] = useState('qr');
 
     useEffect(() => {
         document.body.classList.add('demo-active');
@@ -254,7 +254,7 @@ const LiveDemoModal = ({ onClose }) => {
         let isMounted = true;
         const runScript = async () => {
             const wait = (ms) => new Promise(res => setTimeout(res, ms));
-            
+
             const moveTo = (elementId, isCloseBtn = false) => {
                 const el = document.getElementById(elementId);
                 if (el && isMounted) {
@@ -270,8 +270,8 @@ const LiveDemoModal = ({ onClose }) => {
             setIsClicking(true);
             await wait(200);
             setIsClicking(false);
-            
-            if(isMounted) setView('demo');
+
+            if (isMounted) setView('demo');
             await wait(1000);
 
             moveTo("demo-p1-opt-0");
@@ -280,7 +280,7 @@ const LiveDemoModal = ({ onClose }) => {
             setMovieState(s => ({ ...s, poll1: 0 }));
             await wait(200);
             setIsClicking(false);
-            
+
             await wait(1000);
             moveTo("demo-p2-opt-1");
             await wait(800);
@@ -288,14 +288,14 @@ const LiveDemoModal = ({ onClose }) => {
             setMovieState(s => ({ ...s, poll2: 1 }));
             await wait(200);
             setIsClicking(false);
-            
+
             await wait(1500);
             moveTo("demo-close-btn", true);
             await wait(800);
             setIsClicking(true);
             await wait(200);
-            
-            if(isMounted) onClose();
+
+            if (isMounted) onClose();
         };
         runScript();
         return () => { isMounted = false; };
@@ -310,7 +310,7 @@ const LiveDemoModal = ({ onClose }) => {
             onClick={onClose}
         >
             <Cursor x={cursor.x} y={cursor.y} isClicking={isClicking} />
-            
+
             <motion.div
                 initial={{ scale: 0.9, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -327,10 +327,10 @@ const LiveDemoModal = ({ onClose }) => {
                             {view === 'qr' ? "Scan the code to enter the demo" : "Simulating real-time audience feedback"}
                         </p>
                     </div>
-                    
-                    <button 
+
+                    <button
                         id="demo-close-btn"
-                        onClick={onClose} 
+                        onClick={onClose}
                         className={cn(
                             "p-2 rounded-full transition-colors",
                             isHoveringClose ? "bg-white/10 text-white" : "text-zinc-400"
@@ -349,12 +349,12 @@ const LiveDemoModal = ({ onClose }) => {
                             exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
                             className="flex flex-col items-center justify-center py-10"
                         >
-                            <div 
+                            <div
                                 id="demo-qr-container"
                                 className="p-8 bg-white rounded-[2rem] shadow-2xl shadow-white/5 relative group"
                             >
                                 <QrCode className="w-32 h-32 text-black" strokeWidth={1.5} />
-                                <motion.div 
+                                <motion.div
                                     animate={{ top: ['0%', '100%', '0%'] }}
                                     transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                                     className="absolute left-0 right-0 h-0.5 bg-red-500/50 shadow-[0_0_10px_red]"
@@ -371,23 +371,23 @@ const LiveDemoModal = ({ onClose }) => {
                             animate={{ opacity: 1, x: 0 }}
                             className="space-y-6"
                         >
-                            <DemoPollCard 
-                                id="demo-p1" 
-                                title="Select Next Track" 
-                                votedIndex={movieState.poll1} 
+                            <DemoPollCard
+                                id="demo-p1"
+                                title="Select Next Track"
+                                votedIndex={movieState.poll1}
                                 options={[
-                                    { name: "Unreleased Single", percent: 45 }, 
+                                    { name: "Unreleased Single", percent: 45 },
                                     { name: "Acoustic Solo", percent: 35 }
-                                ]} 
+                                ]}
                             />
-                            <DemoPollCard 
-                                id="demo-p2" 
-                                title="Light Show Color" 
-                                votedIndex={movieState.poll2} 
+                            <DemoPollCard
+                                id="demo-p2"
+                                title="Light Show Color"
+                                votedIndex={movieState.poll2}
                                 options={[
-                                    { name: "Neon Blue", percent: 60 }, 
+                                    { name: "Neon Blue", percent: 60 },
                                     { name: "Laser Crimson", percent: 40 }
-                                ]} 
+                                ]}
                             />
                         </motion.div>
                     )}
@@ -415,27 +415,27 @@ const Landing = () => {
             <GridPattern />
 
             <nav className="fixed top-0 w-full p-6 flex justify-between items-center z-50 backdrop-blur-md bg-black/10">
-                <motion.div 
-                    initial={{ opacity: 0, x: -20 }} 
-                    animate={{ opacity: 1, x: 0 }} 
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
                     className="flex items-center gap-2 cursor-pointer"
                     onClick={() => navigate('/')}
                 >
                     <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center font-black text-xl">V</div>
                     <span className="font-bold tracking-tighter text-lg">VoteFore</span>
                 </motion.div>
-                
+
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
                     {isLoggedIn ? (
-                        <button 
+                        <button
                             onClick={() => navigate('/profile')}
                             className="w-10 h-10 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center hover:bg-zinc-800 transition-all"
                         >
                             <User className="w-5 h-5 text-zinc-300" />
                         </button>
                     ) : (
-                        <button 
-                            onClick={() => navigate('/sign-in')} 
+                        <button
+                            onClick={() => navigate('/sign-in')}
                             className="px-6 py-2.5 text-sm font-semibold bg-white/5 border border-white/10 hover:bg-white/10 rounded-full transition-all"
                         >
                             Sign In
@@ -447,45 +447,45 @@ const Landing = () => {
             <main className="container mx-auto px-6 relative z-10 pt-28 pb-10 flex flex-col justify-center h-full">
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
                     <div className="text-center lg:text-left">
-                        <motion.div 
-                            initial={{ opacity: 0, y: 10 }} 
-                            animate={{ opacity: 1, y: 0 }} 
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
                             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-400 text-[10px] font-bold uppercase tracking-widest mb-8"
                         >
                             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
                             Next-Gen Event Tech
                         </motion.div>
-                        
+
                         <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.85]">
                             <AnimatedText text="Empower Every" className="text-zinc-600 justify-center lg:justify-start" delay={0.1} />
                             <AnimatedText text="Voice." className="text-white justify-center lg:justify-start" delay={0.3} />
                         </h1>
 
-                        <motion.p 
-                            initial={{ opacity: 0 }} 
-                            animate={{ opacity: 1 }} 
-                            transition={{ delay: 0.8 }} 
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.8 }}
                             className="text-lg text-zinc-500 mb-12 max-w-md mx-auto lg:mx-0 leading-relaxed font-light"
                         >
                             Transform passive spectators into active participants. VoteFore bridges the gap between the stage and the seats with lightning-fast interactive polling.
                         </motion.p>
-                        
+
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <button 
-                                onClick={() => navigate(isLoggedIn ? '/generate' : '/sign-in')} 
+                            <button
+                                onClick={() => navigate(isLoggedIn ? '/generate' : '/sign-in')}
                                 className="group px-8 py-4 bg-white text-black rounded-full font-bold hover:scale-105 transition-all flex items-center justify-center gap-2 shadow-xl shadow-white/5"
                             >
                                 Start Live Poll
                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </button>
-                            <button 
-                                onClick={() => setShowDemo(true)} 
+                            <button
+                                onClick={() => setShowDemo(true)}
                                 className="px-8 py-4 bg-transparent border border-white/10 hover:bg-white/5 text-zinc-300 rounded-full font-bold transition-all"
                             >
                                 See Demo
                             </button>
                         </div>
-                        
+
                         <div className="mt-16 flex gap-8 justify-center lg:justify-start border-t border-white/5 pt-10">
                             <MinimalFeature icon={Radio} title="Instant" delay={1.0} />
                             <MinimalFeature icon={Users} title="Scalable" delay={1.1} />
@@ -509,11 +509,14 @@ const Landing = () => {
                                 animate={{ y: [0, 20, 0] }}
                                 transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                             />
+                            {/* QR CODE POSITION SHIFTED FROM BOTTOM TO TOP */}
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 1.5 }}
-                                className="absolute left-10 bottom-24 z-30 bg-white text-black p-4 rounded-2xl shadow-2xl flex flex-col items-center gap-2 -rotate-6"
+                                // Changed 'right-10 top-24' to 'left-10 top-24'
+                                // Changed 'rotate-6' to '-rotate-6' for a better visual fit on the left
+                                className="absolute left-10 top-24 z-30 bg-white text-black p-4 rounded-2xl shadow-2xl flex flex-col items-center gap-2 -rotate-6"
                             >
                                 <QrCode className="w-10 h-10" />
                                 <span className="font-mono text-[8px] uppercase font-black">Scan to Join</span>
@@ -522,28 +525,28 @@ const Landing = () => {
 
                         <VotingCard />
                     </div>
-                </div>  
+                </div>
             </main>
 
             {/* Bottom Controls (Socials + Legal) */}
             <div className="fixed bottom-8 right-8 z-50 flex items-end gap-6">
                 {/* Legal Links */}
                 <div className="flex gap-4 mb-2">
-                    <button 
-                        onClick={() => navigate('/privacy')} 
+                    <button
+                        onClick={() => navigate('/privacy')}
                         className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-white transition-colors"
                     >
                         Privacy Policy
                     </button>
-                    <button 
-                        onClick={() => navigate('/contact')} 
+                    <button
+                        onClick={() => navigate('/contact')}
                         className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-white transition-colors"
                     >
                         Contact Us
                     </button>
                 </div>
 
-                {/* Social Icons Stack - Updated with Twitter and Youtube, Removed LinkedIn */}
+                {/* Social Icons Stack */}
                 <div className="flex flex-col gap-4">
                     <motion.a
                         href="https://youtube.com"

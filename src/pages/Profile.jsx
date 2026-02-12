@@ -6,7 +6,7 @@ import {
     LogOut, 
     Mail, 
     Calendar, 
-    ArrowLeft,
+    ArrowRight // Replaced ArrowLeft with ArrowRight
 } from 'lucide-react';
 import { auth } from '../firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -54,8 +54,8 @@ const Profile = () => {
             <MouseGradient />
             <GridPattern />
 
-            {/* Header Navigation */}
-            <nav className="fixed top-0 w-full p-6 flex justify-between items-center z-50">
+            {/* Updated Header Navigation to match ContactUs/Home */}
+            <nav className="fixed top-0 w-full p-6 flex justify-between items-center z-50 backdrop-blur-md border-b border-white/5">
                 <div 
                     className="flex items-center gap-3 cursor-pointer group"
                     onClick={() => navigate('/')}
@@ -66,13 +66,22 @@ const Profile = () => {
                     <span className="font-bold tracking-tighter text-xl">VoteFore</span>
                 </div>
 
-                <button
-                    onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-sm font-medium"
-                >
-                    <ArrowLeft className="w-4 h-4" />
-                    Back
-                </button>
+                <div className="flex items-center gap-4">
+                    <button 
+                        onClick={() => navigate('/')} 
+                        className="hidden md:flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors group"
+                    >
+                        Home
+                        <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                    {/* Keeping a highlighted User icon for the Profile page context */}
+                    <button 
+                        className="p-2.5 rounded-xl bg-white/10 border border-white/20 transition-all text-white"
+                        aria-label="User Profile"
+                    >
+                        <User className="w-5 h-5" />
+                    </button>
+                </div>
             </nav>
 
             <main className="flex-1 flex items-center justify-center p-6 relative z-10">
@@ -101,7 +110,7 @@ const Profile = () => {
                             </div>
                             <div className="flex items-center justify-center gap-2 text-zinc-500 text-[10px] uppercase tracking-[0.2em] font-bold">
                                 <Calendar className="w-4 h-4 text-zinc-700" />
-                                Registered {new Date(user?.metadata.creationTime).getFullYear()}
+                                Registered {user?.metadata.creationTime ? new Date(user.metadata.creationTime).getFullYear() : 'N/A'}
                             </div>
                         </div>
 
