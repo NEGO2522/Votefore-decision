@@ -414,10 +414,12 @@ const Landing = () => {
 
     const handleJoinPoll = (e) => {
         e.preventDefault();
-        if (!joinUrl.trim()) return;
+        const trimmedInput = joinUrl.trim();
+        if (!trimmedInput) return;
 
         // Extract ID from full URL or use as is if just a number
-        const pollId = joinUrl.split('/').pop();
+        const pollId = trimmedInput.replace(/\/$/, "").split('/').pop();
+        
         if (pollId) {
             navigate(`/join/${pollId}`);
         }
@@ -623,7 +625,7 @@ const Landing = () => {
                     </motion.a>
                 </div>
             </div>
-
+                    
             <AnimatePresence>
                 {showDemo && <LiveDemoModal onClose={() => setShowDemo(false)} />}
             </AnimatePresence>
