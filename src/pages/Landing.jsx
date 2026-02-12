@@ -12,7 +12,9 @@ import {
     X,
     Instagram,
     Twitter,
-    Youtube
+    Youtube,
+    Hash,
+    LogIn
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -401,6 +403,7 @@ const Landing = () => {
     const navigate = useNavigate();
     const [showDemo, setShowDemo] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [joinUrl, setJoinUrl] = useState('');
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -408,6 +411,17 @@ const Landing = () => {
         });
         return () => unsubscribe();
     }, []);
+
+    const handleJoinPoll = (e) => {
+        e.preventDefault();
+        if (!joinUrl.trim()) return;
+
+        // Extract ID from full URL or use as is if just a number
+        const pollId = joinUrl.split('/').pop();
+        if (pollId) {
+            navigate(`/join/${pollId}`);
+        }
+    };
 
     return (
         <div className="h-screen bg-black text-white selection:bg-white/20 overflow-hidden flex flex-col relative font-sans">
@@ -465,15 +479,46 @@ const Landing = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.8 }}
-                            className="text-lg text-zinc-500 mb-12 max-w-md mx-auto lg:mx-0 leading-relaxed font-light"
+                            className="text-lg text-zinc-500 mb-8 max-w-md mx-auto lg:mx-0 leading-relaxed font-light"
                         >
                             Transform passive spectators into active participants. VoteFore bridges the gap between the stage and the seats with lightning-fast interactive polling.
                         </motion.p>
 
+                        {/* --- JOIN SESSION BAR --- */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.9 }}
+                            className="mb-8 max-w-md mx-auto lg:mx-0"
+                        >
+                            <form onSubmit={handleJoinPoll} className="relative group">
+                                <div className="absolute inset-0 bg-white/5 rounded-2xl blur-xl group-focus-within:bg-white/10 transition-all duration-500"></div>
+                                <div className="relative flex items-center bg-zinc-900/80 border border-white/10 rounded-2xl p-2 pl-6 backdrop-blur-xl focus-within:border-white/30 transition-all shadow-2xl">
+                                    <Hash className="w-4 h-4 text-zinc-500 mr-3" />
+                                    <input 
+                                        type="text" 
+                                        placeholder="Enter Poll Link or ID..."
+                                        value={joinUrl}
+                                        onChange={(e) => setJoinUrl(e.target.value)}
+                                        className="bg-transparent border-none outline-none text-white text-sm font-medium w-full placeholder:text-zinc-600"
+                                    />
+                                    <button 
+                                        type="submit"
+                                        className="bg-white text-black h-10 px-6 rounded-xl font-bold text-xs flex items-center gap-2 hover:bg-zinc-200 active:scale-95 transition-all"
+                                    >
+                                        Join <LogIn className="w-3 h-3" />
+                                    </button>
+                                </div>
+                                <p className="mt-3 text-[10px] text-zinc-500 font-mono uppercase tracking-widest pl-2">
+                                    Participant? Enter your access code above
+                                </p>
+                            </form>
+                        </motion.div>
+
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                             <button
                                 onClick={() => navigate(isLoggedIn ? '/generate' : '/sign-in')}
-                                className="group px-8 py-4 bg-white text-black rounded-full font-bold hover:scale-105 transition-all flex items-center justify-center gap-2 shadow-xl shadow-white/5"
+                                className="group px-8 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2 shadow-xl"
                             >
                                 Start Live Poll
                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -509,13 +554,10 @@ const Landing = () => {
                                 animate={{ y: [0, 20, 0] }}
                                 transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                             />
-                            {/* QR CODE POSITION SHIFTED FROM BOTTOM TO TOP */}
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 1.5 }}
-                                // Changed 'right-10 top-24' to 'left-10 top-24'
-                                // Changed 'rotate-6' to '-rotate-6' for a better visual fit on the left
                                 className="absolute left-10 top-24 z-30 bg-white text-black p-4 rounded-2xl shadow-2xl flex flex-col items-center gap-2 -rotate-6"
                             >
                                 <QrCode className="w-10 h-10" />
@@ -530,7 +572,6 @@ const Landing = () => {
 
             {/* Bottom Controls (Socials + Legal) */}
             <div className="fixed bottom-8 right-8 z-50 flex items-end gap-6">
-                {/* Legal Links */}
                 <div className="flex gap-4 mb-2">
                     <button
                         onClick={() => navigate('/privacy')}
@@ -546,7 +587,6 @@ const Landing = () => {
                     </button>
                 </div>
 
-                {/* Social Icons Stack */}
                 <div className="flex flex-col gap-4">
                     <motion.a
                         href="https://youtube.com"
