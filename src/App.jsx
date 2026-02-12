@@ -26,7 +26,7 @@ function App() {
         <Route path="/generate" element={<Generate />} />
         
         {/* Admin Control Route */}
-        <Route path="/admin/poll" element={<AdminPoll />} />
+        <Route path="/admin/poll/:pollId" element={<AdminPoll />} />
         
         {/* Support & Legal */}
         <Route path="/contact" element={<ContactUs />} />

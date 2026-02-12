@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+// 1. Import the Realtime Database module
+import { getDatabase } from "firebase/database"; 
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -14,6 +16,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+
+// 2. Initialize and export the Database
+export const db = getDatabase(app); 
 
 // Initialize and export Auth
 export const auth = getAuth(app);
