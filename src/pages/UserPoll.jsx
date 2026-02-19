@@ -96,7 +96,11 @@ const UserPoll = () => {
     const handleEmailSubmit = (e) => {
         e.preventDefault();
         if (email.trim() && email.includes('@')) {
-            setIsEnteringEmail(false);
+            if (email.endsWith('poornima.edu.in')) {
+                setIsEnteringEmail(false);
+            } else {
+                alert("Access denied. Only users with poornima.edu.in email addresses can join this poll.");
+            }
         } else {
             alert("Please enter a valid email address.");
         }

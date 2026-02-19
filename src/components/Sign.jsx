@@ -10,7 +10,7 @@ const Sign = () => {
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [info, setInfo] = useState({ type: '', text: '' });
-
+a
     const actionCodeSettings = {
         // Point this to your "finish-sign-in" route
         url: window.location.origin + '/finish-sign-in', 
